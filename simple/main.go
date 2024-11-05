@@ -7,8 +7,11 @@ import (
 )
 
 func main() {
+	userService := newUserService()
+	userHandler := newUserHandler(userService)
+
 	rmh := rmhttp.New()
-	InitRoutes(rmh)
+	initRoutes(rmh, userHandler)
 
 	log.Fatal(rmh.Start())
 }

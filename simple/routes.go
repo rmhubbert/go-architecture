@@ -2,5 +2,6 @@ package main
 
 import "github.com/rmhubbert/rmhttp"
 
-func InitRoutes(rmh *rmhttp.App) {
+func initRoutes(rmh *rmhttp.App, userHandler *userHandler) {
+	rmh.Get("/user", userHandler.findOne)
 }
