@@ -1,7 +1,9 @@
 package main
 
-import "github.com/rmhubbert/rmhttp"
+import (
+	"net/http"
+)
 
-func initRoutes(rmh *rmhttp.App, userHandler *userHandler) {
-	rmh.Get("/user", userHandler.findOne)
+func initRoutes(router *http.ServeMux, userHandler *userHandler) {
+	router.HandleFunc("GET /user", userHandler.findOne)
 }

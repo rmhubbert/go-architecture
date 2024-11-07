@@ -2,16 +2,23 @@ package main
 
 import (
 	"log"
-
-	"github.com/rmhubbert/rmhttp"
+	"net/http"
 )
 
 func main() {
 	userService := newUserService()
 	userHandler := newUserHandler(userService)
 
-	rmh := rmhttp.New()
-	initRoutes(rmh, userHandler)
+	router := http.NewServeMux()
+	server := http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
 
-	log.Fatal(rmh.Start())
+	initRoutes(router, userHandler)
+
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

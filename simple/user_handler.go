@@ -15,9 +15,8 @@ func newUserHandler(userService *userService) *userHandler {
 	}
 }
 
-func (uh *userHandler) findOne(w http.ResponseWriter, r *http.Request) error {
+func (uh *userHandler) findOne(w http.ResponseWriter, r *http.Request) {
 	user := uh.userService.findOne(r.Context(), 1)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(strconv.Itoa(user.id)))
-	return nil
 }
