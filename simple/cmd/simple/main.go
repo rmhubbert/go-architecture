@@ -3,11 +3,13 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/rmhubbert/go-architecture/simple/internal/app"
 )
 
 func main() {
-	userService := newUserService()
-	userHandler := newUserHandler(userService)
+	userService := app.NewUserService()
+	userHandler := app.NewUserHandler(userService)
 
 	router := http.NewServeMux()
 	server := http.Server{
