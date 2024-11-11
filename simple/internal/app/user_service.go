@@ -1,47 +1,63 @@
 package app
 
-import "context"
+import (
+	"context"
 
-type UserService struct{}
+	"golang.org/x/crypto/bcrypt"
+)
+
+type UserService struct {
+	repo *UserRepository
+}
 
 func NewUserService() *UserService {
-	return &UserService{}
-}
-
-func (us *UserService) Get(ctx context.Context, id int) (*User, error) {
-	return &User{
-		Id:    id,
-		Name:  "Hubby",
-		Email: "hubby@rmhubbert.com",
-	}, nil
-}
-
-func (us *UserService) GetAll(ctx context.Context) ([]*User, error) {
-	user1 := &User{
-		Id:    1,
-		Name:  "Hubby",
-		Email: "hubby@rmhubbert.com",
+	return &UserService{
+		repo: NewUserRepository(),
 	}
-	user2 := &User{
-		Id:    2,
-		Name:  "Hubby2",
-		Email: "hubby2@rmhubbert.com",
-	}
-
-	return []*User{user1, user2}, nil
 }
 
-func (us *UserService) Create(ctx context.Context, user *User) (*User, error) {
-	// TODO: insert user
+func (us *UserService) GetOne(ctx context.Context, id int) (*User, error) {
+	user, err := us.repo.GetOne(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (us *UserService) GetMany(ctx context.Context) ([]*User, error) {
+	users, err := us.repo.GetMany(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func (us *UserService) Create(ctx context.Context, u *User) (*User, error) {
+	pass, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
+	if err != nil {
+		return nil, err
+	}
+	u.Password = string(pass)
+
+	user, err := us.repo.Create(ctx, u)
+	if err != nil {
+		return nil, err
+	}
 	return user, nil
 }
 
 func (us *UserService) Update(ctx context.Context, user *User) (*User, error) {
-	// TODO: update user
+	user, err := us.repo.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
 	return user, nil
 }
 
-func (us *UserService) Delete(ctx context.Context, user *User) (*User, error) {
-	// TODO: delete user
-	return user, nil
+func (us *UserService) Delete(ctx context.Context, id int) error {
+	err := us.repo.Delete(ctx, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
