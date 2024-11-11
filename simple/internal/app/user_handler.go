@@ -17,16 +17,16 @@ func NewUserHandler(userService *UserService) *UserHandler {
 	}
 }
 
-func (uh *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (uh *UserHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		id = 1
 	}
 
-	user, err := uh.userService.Get(r.Context(), id)
+	user, err := uh.userService.GetOne(r.Context(), id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, http.StatusText(http.StatusInternalServerError))
+		fmt.Fprint(w, err.Error())
 		return
 	}
 
@@ -35,11 +35,11 @@ func (uh *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(user)
 }
 
-func (uh *UserHandler) GetAll(w http.ResponseWriter, r *http.Request) {
-	users, err := uh.userService.GetAll(r.Context())
+func (uh *UserHandler) GetMany(w http.ResponseWriter, r *http.Request) {
+	users, err := uh.userService.GetMany(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, http.StatusText(http.StatusInternalServerError))
+		fmt.Fprint(w, err.Error())
 		return
 	}
 
@@ -49,23 +49,30 @@ func (uh *UserHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uh *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
-	users, err := uh.userService.Create(r.Context(), &User{})
+	u := User{}
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	user, err := uh.userService.Create(r.Context(), &u)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, http.StatusText(http.StatusInternalServerError))
+		fmt.Fprint(w, err.Error())
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(users)
+	_ = json.NewEncoder(w).Encode(user)
 }
 
 func (uh *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	users, err := uh.userService.Update(r.Context(), &User{})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, http.StatusText(http.StatusInternalServerError))
+		fmt.Fprint(w, err.Error())
 		return
 	}
 
@@ -75,14 +82,20 @@ func (uh *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uh *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	users, err := uh.userService.Delete(r.Context(), &User{})
+	idString := r.PathValue("id")
+	id, err := strconv.Atoi(idString)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, http.StatusText(http.StatusInternalServerError))
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, http.StatusText(http.StatusBadRequest))
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json")
+	err = uh.userService.Delete(r.Context(), id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(users)
 }

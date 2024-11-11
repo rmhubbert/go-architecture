@@ -7,8 +7,8 @@ import (
 )
 
 func initRoutes(router *http.ServeMux, userHandler *app.UserHandler) {
-	router.HandleFunc("GET /user/{id}", userHandler.Get)
-	router.HandleFunc("GET /users", userHandler.GetAll)
+	router.HandleFunc("GET /user/{id}", userHandler.GetOne)
+	router.HandleFunc("GET /users", userHandler.GetMany)
 	router.HandleFunc("POST /user", userHandler.Create)
 	router.HandleFunc("PUT /user", userHandler.Update)
 	router.HandleFunc("DELETE /user", userHandler.Delete)
