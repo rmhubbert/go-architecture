@@ -10,9 +10,9 @@ type UserService struct {
 	repo *UserRepository
 }
 
-func NewUserService() *UserService {
+func NewUserService(repo *UserRepository) *UserService {
 	return &UserService{
-		repo: NewUserRepository(),
+		repo: repo,
 	}
 }
 
@@ -32,14 +32,14 @@ func (us *UserService) GetMany(ctx context.Context) ([]*User, error) {
 	return users, nil
 }
 
-func (us *UserService) Create(ctx context.Context, u *User) (*User, error) {
-	pass, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
+func (us *UserService) Create(ctx context.Context, user *User) (*User, error) {
+	pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
 	if err != nil {
 		return nil, err
 	}
-	u.Password = string(pass)
+	user.Password = string(pass)
 
-	user, err := us.repo.Create(ctx, u)
+	user, err = us.repo.Create(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -60,4 +60,18 @@ func (us *UserService) Delete(ctx context.Context, id int) error {
 		return err
 	}
 	return nil
+}
+
+func (us *UserService) UpdatePassword(ctx context.Context, user *User) (*User, error) {
+	pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = string(pass)
+
+	user, err = us.repo.UpdatePassword(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

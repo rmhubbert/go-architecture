@@ -41,7 +41,7 @@ func (ur *UserRepository) initDatabase() {
 
 func (ur *UserRepository) GetOne(ctx context.Context, id int) (*User, error) {
 	user := User{}
-	row := ur.db.QueryRow(`SELECT * FROM users WHERE id = ?`, id)
+	row := ur.db.QueryRowContext(ctx, `SELECT * FROM users WHERE id = ?`, id)
 	err := row.Scan(&user.Id, &user.Email, &user.Name, &user.Password)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (ur *UserRepository) GetOne(ctx context.Context, id int) (*User, error) {
 }
 
 func (ur *UserRepository) GetMany(ctx context.Context) ([]*User, error) {
-	rows, err := ur.db.Query(`SELECT * FROM users`)
+	rows, err := ur.db.QueryContext(ctx, `SELECT * FROM users`)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (ur *UserRepository) GetMany(ctx context.Context) ([]*User, error) {
 }
 
 func (ur *UserRepository) Create(ctx context.Context, user *User) (*User, error) {
-	res, err := ur.db.Exec(
+	res, err := ur.db.ExecContext(ctx,
 		`INSERT INTO USERS (name, email, password) VALUES (?, ?, ?);`,
 		user.Name,
 		user.Email,
@@ -87,11 +87,35 @@ func (ur *UserRepository) Create(ctx context.Context, user *User) (*User, error)
 }
 
 func (ur *UserRepository) Update(ctx context.Context, user *User) (*User, error) {
-	// TODO: update user
-	return user, nil
+	_, err := ur.db.ExecContext(
+		ctx,
+		`UPDATE users SET name = ?, email = ? WHERE id = ?`,
+		user.Name,
+		user.Email,
+		user.Id,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return ur.GetOne(ctx, user.Id)
 }
 
 func (ur *UserRepository) Delete(ctx context.Context, id int) error {
-	// TODO: delete user
-	return nil
+	_, err := ur.db.ExecContext(ctx, `DELETE FROM users WHERE id = ?`, id)
+	return err
+}
+
+func (ur *UserRepository) UpdatePassword(ctx context.Context, user *User) (*User, error) {
+	_, err := ur.db.ExecContext(
+		ctx,
+		`UPDATE users SET password = ? WHERE id = ?`,
+		user.Password,
+		user.Id,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return ur.GetOne(ctx, user.Id)
 }
