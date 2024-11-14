@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	userService := app.NewUserService()
+	userRepository := app.NewUserRepository()
+	userService := app.NewUserService(userRepository)
 	userHandler := app.NewUserHandler(userService)
 
 	router := http.NewServeMux()
