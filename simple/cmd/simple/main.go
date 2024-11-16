@@ -7,9 +7,9 @@ import (
 	"github.com/rmhubbert/go-architecture/simple/internal/app"
 )
 
-func main() {
-	dbPath := "/Users/hubby/Desktop/test.db"
+var dbPath = "/Users/hubby/Desktop/test.db"
 
+func main() {
 	userRepository := app.NewUserRepository(dbPath)
 	userService := app.NewUserService(userRepository)
 	userHandler := app.NewUserHandler(userService)
