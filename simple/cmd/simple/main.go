@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	userRepository := app.NewUserRepository()
+	userRepository := app.NewUserRepository("/Users/hubby/Desktop/test.db")
 	userService := app.NewUserService(userRepository)
 	userHandler := app.NewUserHandler(userService)
 

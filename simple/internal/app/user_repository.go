@@ -9,12 +9,14 @@ import (
 )
 
 type UserRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	dbPath string
 }
 
-func NewUserRepository() *UserRepository {
+func NewUserRepository(dbPath string) *UserRepository {
 	ur := &UserRepository{
-		db: &sql.DB{},
+		db:     &sql.DB{},
+		dbPath: dbPath,
 	}
 
 	ur.initDatabase()
@@ -23,7 +25,7 @@ func NewUserRepository() *UserRepository {
 
 func (ur *UserRepository) initDatabase() {
 	var err error
-	ur.db, err = sql.Open("sqlite", "/Users/hubby/Desktop/test.db")
+	ur.db, err = sql.Open("sqlite", ur.dbPath)
 	if err != nil {
 		log.Fatalf("failed to open db: %v", err.Error())
 	}
