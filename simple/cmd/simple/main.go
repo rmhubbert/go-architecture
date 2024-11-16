@@ -8,9 +8,15 @@ import (
 )
 
 func main() {
-	userRepository := app.NewUserRepository("/Users/hubby/Desktop/test.db")
+	dbPath := "/Users/hubby/Desktop/test.db"
+
+	userRepository := app.NewUserRepository(dbPath)
 	userService := app.NewUserService(userRepository)
 	userHandler := app.NewUserHandler(userService)
+
+	roleRepository := app.NewRoleRepository(dbPath)
+	roleService := app.NewRoleService(roleRepository)
+	roleHandler := app.NewRoleHandler(roleService)
 
 	router := http.NewServeMux()
 	server := http.Server{
@@ -18,7 +24,7 @@ func main() {
 		Handler: router,
 	}
 
-	initRoutes(router, userHandler)
+	initRoutes(router, userHandler, roleHandler)
 
 	err := server.ListenAndServe()
 	if err != nil {
