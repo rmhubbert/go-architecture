@@ -23,14 +23,14 @@ func NewRoleRepository(dbPath string) *RoleRepository {
 	return ur
 }
 
-func (ur *RoleRepository) initDatabase() {
+func (rr *RoleRepository) initDatabase() {
 	var err error
-	ur.db, err = sql.Open("sqlite", ur.dbPath)
+	rr.db, err = sql.Open("sqlite", rr.dbPath)
 	if err != nil {
 		log.Fatalf("failed to open db: %v", err.Error())
 	}
 
-	_, err = ur.db.Exec(`CREATE TABLE IF NOT EXISTS roles(
+	_, err = rr.db.Exec(`CREATE TABLE IF NOT EXISTS roles(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL
 		)`)
@@ -39,9 +39,9 @@ func (ur *RoleRepository) initDatabase() {
 	}
 }
 
-func (ur *RoleRepository) GetOne(ctx context.Context, id int) (*Role, error) {
+func (rr *RoleRepository) GetOne(ctx context.Context, id int) (*Role, error) {
 	role := Role{}
-	row := ur.db.QueryRowContext(ctx, `SELECT * FROM roles WHERE id = ?`, id)
+	row := rr.db.QueryRowContext(ctx, `SELECT * FROM roles WHERE id = ?`, id)
 	err := row.Scan(&role.Id, &role.Name)
 	if err != nil {
 		return nil, err
@@ -49,8 +49,8 @@ func (ur *RoleRepository) GetOne(ctx context.Context, id int) (*Role, error) {
 	return &role, nil
 }
 
-func (ur *RoleRepository) GetMany(ctx context.Context) ([]*Role, error) {
-	rows, err := ur.db.QueryContext(ctx, `SELECT * FROM roles`)
+func (rr *RoleRepository) GetMany(ctx context.Context) ([]*Role, error) {
+	rows, err := rr.db.QueryContext(ctx, `SELECT * FROM roles`)
 	if err != nil {
 		return nil, err
 	}
@@ -67,9 +67,9 @@ func (ur *RoleRepository) GetMany(ctx context.Context) ([]*Role, error) {
 	return roles, nil
 }
 
-func (ur *RoleRepository) Create(ctx context.Context, role *Role) (*Role, error) {
-	res, err := ur.db.ExecContext(ctx,
-		`INSERT INTO USERS (name) VALUES (?);`,
+func (rr *RoleRepository) Create(ctx context.Context, role *Role) (*Role, error) {
+	res, err := rr.db.ExecContext(ctx,
+		`INSERT INTO roles (name) VALUES (?);`,
 		role.Name,
 	)
 	if err != nil {
@@ -84,8 +84,8 @@ func (ur *RoleRepository) Create(ctx context.Context, role *Role) (*Role, error)
 	return role, nil
 }
 
-func (ur *RoleRepository) Update(ctx context.Context, role *Role) (*Role, error) {
-	_, err := ur.db.ExecContext(
+func (rr *RoleRepository) Update(ctx context.Context, role *Role) (*Role, error) {
+	_, err := rr.db.ExecContext(
 		ctx,
 		`UPDATE roles SET name = ? WHERE id = ?`,
 		role.Name,
@@ -95,10 +95,10 @@ func (ur *RoleRepository) Update(ctx context.Context, role *Role) (*Role, error)
 		return nil, err
 	}
 
-	return ur.GetOne(ctx, role.Id)
+	return rr.GetOne(ctx, role.Id)
 }
 
-func (ur *RoleRepository) Delete(ctx context.Context, id int) error {
-	_, err := ur.db.ExecContext(ctx, `DELETE FROM roles WHERE id = ?`, id)
+func (rr *RoleRepository) Delete(ctx context.Context, id int) error {
+	_, err := rr.db.ExecContext(ctx, `DELETE FROM roles WHERE id = ?`, id)
 	return err
 }
