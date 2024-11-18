@@ -60,7 +60,7 @@ func (uh *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := uh.userService.Create(r.Context(), cu.User())
+	user, err := uh.userService.Create(r.Context(), cu)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, err.Error())

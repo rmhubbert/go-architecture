@@ -5,12 +5,18 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
+	Roles    []*Role
+}
+
+func (user *User) addRole(role *Role) {
+	user.Roles = append(user.Roles, role)
 }
 
 type CreateUserInput struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password,omitempty"`
+	Roles    []int  `json:"roles"`
 }
 
 func (cu *CreateUserInput) User() *User {
