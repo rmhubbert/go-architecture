@@ -9,11 +9,13 @@ import (
 
 type UserHandler struct {
 	userService *UserService
+	roleService *RoleService
 }
 
-func NewUserHandler(userService *UserService) *UserHandler {
+func NewUserHandler(userService *UserService, roleService *RoleService) *UserHandler {
 	return &UserHandler{
 		userService: userService,
+		roleService: roleService,
 	}
 }
 
@@ -60,7 +62,17 @@ func (uh *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := uh.userService.Create(r.Context(), cu)
+	role, err := uh.roleService.GetOne(r.Context(), cu.RoleId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	user := cu.User()
+	user.Role = role
+
+	user, err = uh.userService.Create(r.Context(), user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, err.Error())
@@ -88,7 +100,17 @@ func (uh *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := uh.userService.Update(r.Context(), cu.User())
+	role, err := uh.roleService.GetOne(r.Context(), cu.RoleId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	user := cu.User()
+	user.Role = role
+
+	user, err = uh.userService.Update(r.Context(), user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, err.Error())
