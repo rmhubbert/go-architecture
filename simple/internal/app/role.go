@@ -28,13 +28,13 @@ func (cu *UpdateRoleInput) Role() *Role {
 }
 
 type RoleOutput struct {
-	Id   int    `json:"id"`
+	Id   int    `json:"id,string"`
 	Name string `json:"name"`
 }
 
-func NewRoleOutput(user *Role) *RoleOutput {
+func NewRoleOutput(role *Role) *RoleOutput {
 	return &RoleOutput{
-		Id:   user.Id,
-		Name: user.Name,
+		Id:   role.Id,
+		Name: role.Name,
 	}
 }
