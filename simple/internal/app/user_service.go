@@ -32,13 +32,8 @@ func (us *UserService) GetMany(ctx context.Context) ([]*User, error) {
 	return users, nil
 }
 
-func (us *UserService) Create(ctx context.Context, cu *CreateUserInput) (*User, error) {
-	user := &User{
-		Name:  cu.Name,
-		Email: cu.Email,
-	}
-
-	pass, err := bcrypt.GenerateFromPassword([]byte(cu.Password), 14)
+func (us *UserService) Create(ctx context.Context, user *User) (*User, error) {
+	pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +41,6 @@ func (us *UserService) Create(ctx context.Context, cu *CreateUserInput) (*User, 
 
 	user, err = us.repo.Create(ctx, user)
 	if err != nil {
-		return nil, err
-	}
-
-	if err := us.syncRoles(ctx, user, cu.Roles); err != nil {
 		return nil, err
 	}
 
@@ -84,18 +75,4 @@ func (us *UserService) UpdatePassword(ctx context.Context, user *User) (*User, e
 		return nil, err
 	}
 	return user, nil
-}
-
-func (us *UserService) syncRoles(ctx context.Context, user *User, roleIds []int) error {
-	for _, roleId := range roleIds {
-		user.addRole(&Role{
-			Id: roleId,
-		})
-	}
-
-	err := us.repo.syncRoles(ctx, user)
-	if err != nil {
-		return err
-	}
-	return nil
 }
