@@ -7,16 +7,16 @@ import (
 	"github.com/rmhubbert/go-architecture/simple/internal/app"
 )
 
-var dbPath = "/Users/hubby/Desktop/test.db"
+var dbPath = "../app.db"
 
 func main() {
-	userRepository := app.NewUserRepository(dbPath)
-	userService := app.NewUserService(userRepository)
-	userHandler := app.NewUserHandler(userService)
-
 	roleRepository := app.NewRoleRepository(dbPath)
 	roleService := app.NewRoleService(roleRepository)
 	roleHandler := app.NewRoleHandler(roleService)
+
+	userRepository := app.NewUserRepository(dbPath)
+	userService := app.NewUserService(userRepository)
+	userHandler := app.NewUserHandler(userService, roleService)
 
 	router := http.NewServeMux()
 	server := http.Server{
