@@ -23,3 +23,10 @@ go.work.sum
 
 # env file
 .env
+
+# test database
+app.db
+
+# bin and tmp folders
+bin
+tmp
