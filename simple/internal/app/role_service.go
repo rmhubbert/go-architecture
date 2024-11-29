@@ -30,6 +30,14 @@ func (rs *RoleService) GetMany(ctx context.Context) ([]*Role, error) {
 	return roles, nil
 }
 
+func (rs *RoleService) GetManyById(ctx context.Context, ids []int) ([]*Role, error) {
+	roles, err := rs.repo.GetManyById(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
+}
+
 func (rs *RoleService) Create(ctx context.Context, role *Role) (*Role, error) {
 	role, err := rs.repo.Create(ctx, role)
 	if err != nil {
