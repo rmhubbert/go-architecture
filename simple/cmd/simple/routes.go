@@ -12,7 +12,7 @@ func initRoutes(router *http.ServeMux, userHandler *app.UserHandler, roleHandler
 	router.HandleFunc("POST /user", userHandler.Create)
 	router.HandleFunc("PATCH /user/{id}", userHandler.Update)
 	router.HandleFunc("DELETE /user/{id}", userHandler.Delete)
-	router.HandleFunc("PATCH /user/password/{id}", userHandler.UpdatePassword)
+	router.HandleFunc("PATCH /user/{id}/password", userHandler.UpdatePassword)
 
 	router.HandleFunc("GET /role/{id}", roleHandler.GetOne)
 	router.HandleFunc("GET /roles", roleHandler.GetMany)
