@@ -5,18 +5,14 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
-	Roles    []*Role
-}
-
-func (user *User) addRole(role *Role) {
-	user.Roles = append(user.Roles, role)
+	Role     *Role
 }
 
 type CreateUserInput struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password,omitempty"`
-	Roles    []int  `json:"roles"`
+	RoleId   int    `json:"role_id,string"`
 }
 
 func (cu *CreateUserInput) User() *User {
@@ -28,9 +24,10 @@ func (cu *CreateUserInput) User() *User {
 }
 
 type UpdateUserInput struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Id     int    `json:"id,string"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	RoleId int    `json:"role_id,string"`
 }
 
 func (cu *UpdateUserInput) User() *User {
@@ -42,9 +39,10 @@ func (cu *UpdateUserInput) User() *User {
 }
 
 type UserOutput struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Id    int         `json:"id,string"`
+	Name  string      `json:"name"`
+	Email string      `json:"email"`
+	Role  *RoleOutput `json:"role"`
 }
 
 func NewUserOutput(user *User) *UserOutput {
@@ -52,11 +50,12 @@ func NewUserOutput(user *User) *UserOutput {
 		Id:    user.Id,
 		Name:  user.Name,
 		Email: user.Email,
+		Role:  NewRoleOutput(user.Role),
 	}
 }
 
 type UpdateUserPasswordInput struct {
-	Id       int    `json:"id"`
+	Id       int    `json:"id,string"`
 	Password string `json:"password"`
 }
 
