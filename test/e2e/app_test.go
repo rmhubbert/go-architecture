@@ -30,6 +30,7 @@ func Test_CreateRole(t *testing.T) {
 	}{
 		{1, "admin"},
 		{2, "editor"},
+		{3, "deletable"},
 	}
 
 	for _, test := range testData {
@@ -91,6 +92,7 @@ func Test_CreateUser(t *testing.T) {
 	}{
 		{1, "user 1", "user1@test.com", "pass1", 1},
 		{2, "user 2", "user2@test.com", "pass2", 2},
+		{3, "user 3", "user3@test.com", "pass3", 3},
 	}
 
 	for _, test := range testData {
@@ -305,8 +307,8 @@ func Test_GetManyRoles(t *testing.T) {
 		t.Errorf("failed to unmarshal response json: %v", err)
 	}
 
-	if len(roleOutput) != 2 {
-		t.Error("expected 2 roles to be returned")
+	if len(roleOutput) != 3 {
+		t.Error("expected 3 roles to be returned")
 	}
 }
 
@@ -334,8 +336,8 @@ func Test_GetManyUsers(t *testing.T) {
 		t.Errorf("failed to unmarshal response json: %v", err)
 	}
 
-	if len(userOutput) != 2 {
-		t.Error("expected 2 roles to be returned")
+	if len(userOutput) != 3 {
+		t.Error("expected 3 roles to be returned")
 	}
 }
 
@@ -365,7 +367,7 @@ func Test_UpdatePassword(t *testing.T) {
 }
 
 func Test_DeleteUser(t *testing.T) {
-	url := testAddress + "/user/1"
+	url := testAddress + "/user/3"
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		t.Errorf("failed to create request: %v", err)
@@ -401,13 +403,13 @@ func Test_DeleteUser(t *testing.T) {
 		t.Errorf("failed to unmarshal response json: %v: %v", err, string(resBody))
 	}
 
-	if len(userOutput) != 1 {
-		t.Error("expected 1 user to be returned")
+	if len(userOutput) != 2 {
+		t.Error("expected 2 user to be returned")
 	}
 }
 
 func Test_DeleteRole(t *testing.T) {
-	url := testAddress + "/role/1"
+	url := testAddress + "/role/3"
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		t.Errorf("failed to create request: %v", err)
@@ -443,7 +445,7 @@ func Test_DeleteRole(t *testing.T) {
 		t.Errorf("failed to unmarshal response json: %v", err)
 	}
 
-	if len(roleOutput) != 1 {
-		t.Error("expected 1 role to be returned")
+	if len(roleOutput) != 2 {
+		t.Error("expected 2 role to be returned")
 	}
 }
