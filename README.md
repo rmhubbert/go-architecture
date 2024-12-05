@@ -6,10 +6,11 @@ This project aims to provide examples of some of the popular software architectu
 
 I'll be demonstrating how to build a simple web service using the following architectures -
 
-- Simple
-- Modular
-- Model View Controller
-- Hexagonal / Ports & Adapters
+- [Simple](https://github.com/rmhubbert/go-architecture/tree/main/simple)
+- [Layered](https://github.com/rmhubbert/go-architecture/tree/main/layered)
+- [Modular](https://github.com/rmhubbert/go-architecture/tree/main/modular)
+- [Model View Controller](https://github.com/rmhubbert/go-architecture/tree/main/mvc)
+- [Hexagonal / Ports & Adapters](https://github.com/rmhubbert/go-architecture/tree/main/hexagonal)
 
 ## The Project
 
